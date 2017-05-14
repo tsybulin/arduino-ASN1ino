@@ -1,0 +1,13 @@
+Bluno DEFINITIONS ::= BEGIN
+
+    Arg ::= SEQUENCE {
+	arg1 [1] BYTE,
+	arg2 [2] BYTE OPTIONAL,
+	arg3 [3] OCTET STRING OPTIONAL
+    }
+
+    Command ::= SEQUENCE {
+        command [4] BYTE,
+        args    [5] Arg OPTIONAL
+    }
+END
