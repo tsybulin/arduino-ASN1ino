@@ -1,6 +1,9 @@
 #include "ASN1ino.h"
 #include <utility/pt_coder.h>
 
+// BLE max packet size is 20 bytes
+#define NOTIFY_MTU 20
+
 ASN1ino::ASN1ino() {
     this->ptr = 0 ;
     this->stream = &Serial ;
@@ -52,7 +55,17 @@ void ASN1ino::setCommandHadler(ASN1inoCommandHandler handler) {
 char Command_consume_bytes(const void *buffer, uint8_t size, void *app_key) {
     Stream *stream = (Stream *)app_key ;
     char *buff = (char*) buffer ;
-    char count = stream->write(buff, size) ;
+    char count = 0 ;
+    byte loc = 0 ;
+    while (loc < size) {
+        byte length = size - loc ;
+        if (length > NOTIFY_MTU) {
+            length = NOTIFY_MTU ;
+        }
+
+        count += stream->write(&buff[loc], length) ;
+        loc += length ;
+    }
     return count ;
 }
 
